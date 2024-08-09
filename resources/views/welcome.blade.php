@@ -115,10 +115,12 @@
 
                                     <p class="mt-4 text-sm/relaxed">
 
-                                    @foreach ($log->getContext() as $key => $context)
-                                        <h2 class="text-xxl font-semibold text-black dark:text-white">{{ $key }}</h2>
-                                        <p>{{ $context }}</p>
-                                    @endforeach
+                                    @if(!is_null($log))
+                                        @foreach ($log->getContext() as $key => $context)
+                                            <h2 class="text-xxl font-semibold text-black dark:text-white">{{ $key }}</h2>
+                                            <p>{{ $context }}</p>
+                                        @endforeach
+                                    @endif
 
                                         Laracasts offers thousands of video tutorials on Laravel, PHP, and JavaScript development. Check them out, see for yourself, and massively level up your development skills in the process.
                                     </p>
