@@ -1,45 +1,17 @@
 {
-    "commit-msg": {
-        "enabled": false,
-        "actions": []
-    },
-    "pre-push": {
-        "enabled": false,
-        "actions": []
+    "config": {
+        "run": {
+            "mode": "docker",
+            "exec": "docker-compose -f ./docker-compose.yml run --rm -T laravel.test",
+            "path": "./vendor/bin/captainhook"
+        }
     },
     "pre-commit": {
         "enabled": true,
         "actions": [
             {
-                "action": "\\CaptainHook\\App\\Hook\\PHP\\Action\\Linting"
-            },
-            {
-                "action": "phpunit"
+                "action": "php artisan test --parallel"
             }
         ]
-    },
-    "prepare-commit-msg": {
-        "enabled": false,
-        "actions": []
-    },
-    "post-commit": {
-        "enabled": false,
-        "actions": []
-    },
-    "post-merge": {
-        "enabled": false,
-        "actions": []
-    },
-    "post-checkout": {
-        "enabled": false,
-        "actions": []
-    },
-    "post-rewrite": {
-        "enabled": false,
-        "actions": []
-    },
-    "post-change": {
-        "enabled": false,
-        "actions": []
     }
 }
