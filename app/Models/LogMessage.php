@@ -2,32 +2,36 @@
 
 namespace App\Models;
 
+use ArrayObject;
+use Database\Factories\LogMessageFactory;
+use Eloquent;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $level_name
  * @property int $level
  * @property string $message
  * @property string|null $logged_at
- * @property \ArrayObject $context
- * @property \ArrayObject $extra
- * @method static \Database\Factories\LogMessageFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|LogMessage newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|LogMessage newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|LogMessage query()
- * @method static \Illuminate\Database\Eloquent\Builder|LogMessage whereContext($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LogMessage whereExtra($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LogMessage whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LogMessage whereLevel($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LogMessage whereLevelName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LogMessage whereLoggedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LogMessage whereMessage($value)
- * @mixin \Eloquent
+ * @property ArrayObject $context
+ * @property ArrayObject $extra
+ * @method static LogMessageFactory factory($count = null, $state = [])
+ * @method static Builder|LogMessage newModelQuery()
+ * @method static Builder|LogMessage newQuery()
+ * @method static Builder|LogMessage query()
+ * @method static Builder|LogMessage whereContext($value)
+ * @method static Builder|LogMessage whereExtra($value)
+ * @method static Builder|LogMessage whereId($value)
+ * @method static Builder|LogMessage whereLevel($value)
+ * @method static Builder|LogMessage whereLevelName($value)
+ * @method static Builder|LogMessage whereLoggedAt($value)
+ * @method static Builder|LogMessage whereMessage($value)
+ * @mixin Eloquent
  */
 class LogMessage extends Model
 {
@@ -67,7 +71,7 @@ class LogMessage extends Model
     /**
      * @return string
      */
-    public function getLevelName(): string
+    public function getStatus(): string
     {
         return $this->level_name;
     }
@@ -90,21 +94,21 @@ class LogMessage extends Model
 
     public function getLogged(): string
     {
-        return $this->asDateTime($this->logged_at)->setTimezone(config('app.timezone'));
+        return $this->asDateTime($this->logged_at)->setTimezone(config('app.timezone'))->toDateTimeString();
     }
 
     /**
-     * @return \ArrayObject
+     * @return ArrayObject
      */
-    public function getContext(): \ArrayObject
+    public function getContext(): ArrayObject
     {
         return $this->context;
     }
 
     /**
-     * @return \ArrayObject
+     * @return ArrayObject
      */
-    public function getExtra(): \ArrayObject
+    public function getExtra(): ArrayObject
     {
         return $this->extra;
     }
