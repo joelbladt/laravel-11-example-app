@@ -11,8 +11,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- *
- *
  * @property int $id
  * @property string $level_name
  * @property int $level
@@ -20,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $logged_at
  * @property ArrayObject $context
  * @property ArrayObject $extra
+ *
  * @method static LogMessageFactory factory($count = null, $state = [])
  * @method static Builder|LogMessage newModelQuery()
  * @method static Builder|LogMessage newQuery()
@@ -31,6 +30,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static Builder|LogMessage whereLevelName($value)
  * @method static Builder|LogMessage whereLoggedAt($value)
  * @method static Builder|LogMessage whereMessage($value)
+ *
  * @mixin Eloquent
  */
 class LogMessage extends Model
@@ -105,9 +105,6 @@ class LogMessage extends Model
         return $this->context;
     }
 
-    /**
-     * @return ArrayObject
-     */
     public function getExtra(): ArrayObject
     {
         return $this->extra;

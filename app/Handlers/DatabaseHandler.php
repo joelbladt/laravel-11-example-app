@@ -3,15 +3,16 @@
 namespace App\Handlers;
 
 use App\Models\LogMessage;
+use Exception;
 use Illuminate\Support\Facades\Log;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\LogRecord;
+use Throwable;
 
 class DatabaseHandler extends AbstractProcessingHandler
 {
-
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected function write(LogRecord $record): void
     {
@@ -21,7 +22,7 @@ class DatabaseHandler extends AbstractProcessingHandler
 
         $exception = $record['context']['exception'] ?? null;
 
-        if ($exception instanceof \Throwable) {
+        if ($exception instanceof Throwable) {
             $record['context']['exception'] = (string) $exception;
         }
 
@@ -34,7 +35,7 @@ class DatabaseHandler extends AbstractProcessingHandler
                 'context' => $record['context'],
                 'extra' => $record['extra'],
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $fallbackChannels = config('logging.channels.fallback.channels', ['single']);
 
             Log::stack($fallbackChannels)->debug($record['formatted'] ?? $record['message']);

@@ -2,8 +2,8 @@
 
 namespace App\Loggers;
 
-use Monolog\Logger;
 use App\Handlers\DatabaseHandler;
+use Monolog\Logger;
 
 class DatabaseLogger
 {
@@ -12,7 +12,7 @@ class DatabaseLogger
      *
      * @return Logger
      */
-    public function __invoke(array $config)
+    public function __invoke(array $config): Logger
     {
         return new Logger('database', [
             new DatabaseHandler(),
