@@ -7,6 +7,7 @@ use Database\Factories\LogMessageFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -68,38 +69,6 @@ class LogMessage extends Model
         'extra' => AsArrayObject::class,
     ];
 
-    /**
-     * @return string
-     */
-    public function getStatus(): string
-    {
-        return $this->level_name;
-    }
-
-    /**
-     * @return int
-     */
-    public function getLevel(): int
-    {
-        return $this->level;
-    }
-
-    /**
-     * @return string
-     */
-    public function getMessage(): string
-    {
-        return $this->message;
-    }
-
-    public function getLogged(): string
-    {
-        return $this->asDateTime($this->logged_at)->setTimezone(config('app.timezone'))->toDateTimeString();
-    }
-
-    /**
-     * @return ArrayObject
-     */
     public function getContext(): ArrayObject
     {
         return $this->context;
@@ -108,5 +77,12 @@ class LogMessage extends Model
     public function getExtra(): ArrayObject
     {
         return $this->extra;
+    }
+
+    protected function LevelName(): Attribute
+    {
+        return Attribute::make(
+            set: fn(string $value) => mb_strtoupper($value),
+        );
     }
 }
