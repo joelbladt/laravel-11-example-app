@@ -2,7 +2,8 @@
 
 namespace Tests\Unit\Eloquent\Models;
 
-use App\Models\LogMessage;
+use App\Interfaces\Eloquent\LogMessageInterface;
+use App\Repositories\Eloquent\LogMessageRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Monolog\Level;
 use Psr\Log\LogLevel;
@@ -12,17 +13,21 @@ class LogMessageTest extends TestCase
 {
     use RefreshDatabase;
 
+    private LogMessageInterface $logger;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        LogMessage::factory()->create([
+        $this->logger = new LogMessageRepository();
+
+        $this->logger->create([
             'level_name' => LogLevel::INFO,
             'level' => Level::Info,
             'message' => 'Test info message.',
         ]);
 
-        LogMessage::factory()->create([
+        $this->logger->create([
             'level_name' => LogLevel::ERROR,
             'level' => Level::Error,
             'message' => 'Test error message.',
@@ -31,43 +36,64 @@ class LogMessageTest extends TestCase
 
     public function testGetMessageFromDatabase(): void
     {
-        $logMessage = LogMessage::first();
+        $logMessage = $this->logger->all();
 
-        $this->assertSame('Test info message.', $logMessage->message);
+        $result = $logMessage->first();
+
+        $this->assertSame('Test info message.', $result->message);
+    }
+
+    public function testGetMessageFromDatabaseById(): void
+    {
+        $logMessage = $this->logger->find(2);
+
+        $result = $logMessage->getOriginal('message');
+
+        $this->assertSame('Test error message.', $result);
     }
 
     public function testGetLogLevelFromDatabase(): void
     {
-        $logMessage = LogMessage::first();
+        $logMessage = $this->logger->all();
 
-        $this->assertSame(200, $logMessage->level);
+        $result = $logMessage->first();
+
+        $this->assertSame(200, $result->level);
     }
 
     public function testGetLogLevelNameFromDatabase(): void
     {
-        $logMessage = LogMessage::first();
+        $logMessage = $this->logger->all();
 
-        $this->assertSame('INFO', $logMessage->level_name);
+        $result = $logMessage->first();
+
+        $this->assertSame('INFO', $result->level_name);
     }
 
     public function testGetLoggedTimeFromDatabase(): void
     {
-        $logMessage = LogMessage::first();
+        $logMessage = $this->logger->all();
 
-        $this->assertSame(now()->toDateTimeString(), $logMessage->logged_at);
+        $result = $logMessage->first();
+
+        $this->assertSame(now()->toDateTimeString(), $result->logged_at);
     }
 
     public function testGetLoggedContextFromDatabase(): void
     {
-        $logMessage = LogMessage::latest()->first();
+        $logMessage = $this->logger->all();
 
-        $this->assertSame([], $logMessage->getContext()->toArray());
+        $result = $logMessage->last();
+
+        $this->assertSame([], $result->getContext()->toArray());
     }
 
     public function testGetLoggedExtraContextFromDatabase(): void
     {
-        $logMessage = LogMessage::latest()->first();
+        $logMessage = $this->logger->all();
 
-        $this->assertSame([], $logMessage->getExtra()->toArray());
+        $result = $logMessage->first();
+
+        $this->assertSame([], $result->getExtra()->toArray());
     }
 }

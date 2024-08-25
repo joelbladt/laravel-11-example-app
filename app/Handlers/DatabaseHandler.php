@@ -2,7 +2,7 @@
 
 namespace App\Handlers;
 
-use App\Models\LogMessage;
+use App\Repositories\Eloquent\LogMessageRepository;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Monolog\Handler\AbstractProcessingHandler;
@@ -27,7 +27,8 @@ class DatabaseHandler extends AbstractProcessingHandler
         }
 
         try {
-            LogMessage::create([
+            $logger = new LogMessageRepository();
+            $logger->create([
                 'level' => $record['level'],
                 'level_name' => $record['level_name'],
                 'message' => $record['message'],
