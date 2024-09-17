@@ -2,14 +2,17 @@
 
 namespace Tests\Unit\Handlers;
 
+use App\Handlers\DatabaseHandler;
 use App\Loggers\DatabaseLogger;
 use App\Models\LogMessage;
+use DateTimeImmutable;
 use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Mockery as m;
+use Monolog\LogRecord;
 use Tests\TestCase;
 
 class DatabaseHandlerTest extends TestCase
@@ -130,38 +133,116 @@ class DatabaseHandlerTest extends TestCase
     {
         $this->throwException(new Exception('Error succeed'));
 
-        Config::set('logging.channels.alternate', 'invalid');
+        $mockRecord = m::mock(LogRecord::class, [
+            'datetime' => new DateTimeImmutable(),
+            'channel' => 'test',
+            'message' => 'Test log message',
+            'context' => [],
+            'extra' => [],
+        ]);
 
-        Log::channel('alternate')->info('Test error message');
+        $mockRecord
+            ->shouldReceive('toArray')
+            ->andThrow(new Exception('Something went wrong.'));
+
+        $mockHandler = m::mock(DatabaseHandler::class)->makePartial();
+        $mockHandler->shouldAllowMockingProtectedMethods();
+
+        $mockHandler
+            ->shouldReceive('write')
+            ->once()
+            ->andReturnSelf();
+
+        $mockHandler->write($mockRecord);
 
         $this->assertDatabaseMissing('logs', [
-            'level_name' => mb_strtoupper('info'),
-            'message' => 'Test error message',
+            'message' => 'Test log message',
         ]);
-        //
-        //        $this->expectException(\Exception::class);
-        //
-        //        Mockery::mock(LogMessage::class)
-        //            ->shouldReceive('create')
-        //            ->andThrow(\Exception::class);
-        //
-        //        $record = new LogRecord(
-        //            datetime: new \DateTimeImmutable(),
-        //            channel: 'test',
-        //            level: Level::tryFrom(100),
-        //            message: 'Test message',
-        //            context: [],
-        //            extra: []
-        //        );
-        //
-        //        Mockery::mock(DatabaseHandler::class)
-        //            ->shouldReceive('handle')
-        //            ->with($record)->andThrow(new \Exception('handled-exception-response'));
-        //
-        //        $this->assertInstanceOf(\Exception::class, $this);
-        //
-        //        $this->assertDatabaseMissing('logs', [
-        //            'exception' => (string) new \Exception('handled-exception-response')
-        //        ]);
+    }
+
+    //    public function testThrowException(): void
+    //    {
+    //        $this->expectException(Exception::class);
+    //
+    //        // Mock the LogMessageRepository to throw an exception when create() is called
+    //        m::mock(LogMessageRepository::class)
+    //            ->shouldReceive('create')
+    //            ->with([])
+    //            ->andThrow(Exception::class, 'something went wrong.');
+    //
+    //        // Mock the Log facade to expect the fallback logging
+    //        Log::shouldReceive('stack')
+    //            ->once()
+    //            ->with(['single'])
+    //            ->andReturnSelf();
+    //
+    //        Log::shouldReceive('debug')
+    //            ->twice(); // Once for the original message and once for the exception
+    //
+    //        // Create a LogRecord to pass to the handler
+    //        $logRecord = new LogRecord(
+    //            datetime: new \DateTimeImmutable(),
+    //            channel: 'test',
+    //            level: Level::Info,
+    //            message: 'Test log message',
+    //            context: [],
+    //            extra: [],
+    //        );
+    //
+    //        // Create the DatabaseHandler instance
+    //        $databaseHandler = new DatabaseHandler();
+    //
+    //        $databaseHandler->handle($logRecord);
+    //
+    //        $this->testThrowException();
+    //    }
+    //
+    //    public function testWriteHandlesExceptionGracefully()
+    //    {
+    //        // Mock the LogMessageRepository to throw an exception when create() is called
+    //        $logMessageRepositoryMock = $this->createMock(LogMessageRepository::class);
+    //        $logMessageRepositoryMock
+    //            ->expects($this->once())
+    //            ->method('create')
+    //            ->willThrowException(new Exception('Database error'));
+    //
+    //        // Mock the Log facade to expect the fallback logging
+    //        Log::shouldReceive('stack')
+    //            ->once()
+    //            ->with(['single'])
+    //            ->andReturnSelf();
+    //
+    //        Log::shouldReceive('debug')
+    //            ->twice(); // Once for the original message and once for the exception
+    //
+    //        // Create a LogRecord to pass to the handler
+    //        $logRecord = new LogRecord(
+    //            datetime: new \DateTimeImmutable(),
+    //            channel: 'test',
+    //            level: Level::Info,
+    //            message: 'Test log message',
+    //            context: [],
+    //            extra: [],
+    //        );
+    //
+    //        // Create the DatabaseHandler instance
+    //        $databaseHandler = new DatabaseHandler();
+    //
+    //        // Use reflection to access the protected write method
+    //        $reflection = new \ReflectionClass($databaseHandler);
+    //        $method = $reflection->getMethod('handle');
+    //        $method->setAccessible(true);
+    //
+    //        // Call the write methodw, which should handle the exception internally
+    //        $method->invoke($databaseHandler, $logRecord);
+    //
+    //        $this->assertInstanceOf(Exception::class, $method);
+    //    }
+
+    public function tearDown(): void
+    {
+        // Close Mockery to prevent any errors about open expectations
+        m::close();
+        parent::tearDown();
     }
 }

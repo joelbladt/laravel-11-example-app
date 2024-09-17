@@ -16,17 +16,17 @@ class DatabaseHandler extends AbstractProcessingHandler
      */
     protected function write(LogRecord $record): void
     {
-        if (!is_array($record)) {
-            $record = $record->toArray();
-        }
-
-        $exception = $record['context']['exception'] ?? null;
-
-        if ($exception instanceof Throwable) {
-            $record['context']['exception'] = (string) $exception;
-        }
-
         try {
+            if (!is_array($record)) {
+                $record = $record->toArray();
+            }
+
+            $exception = $record['context']['exception'] ?? null;
+
+            if ($exception instanceof Throwable) {
+                $record['context']['exception'] = (string)$exception;
+            }
+
             $logger = new LogMessageRepository();
             $logger->create([
                 'level' => $record['level'],

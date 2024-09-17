@@ -4,10 +4,10 @@ namespace App\Repositories\Eloquent;
 
 use App\Interfaces\Eloquent\LogMessageInterface;
 use App\Models\LogMessage;
-use App\Repositories\Repository;
+use App\Repositories\Repository as BaseRepository;
 use Illuminate\Database\Eloquent\Collection;
 
-class LogMessageRepository extends Repository implements LogMessageInterface
+class LogMessageRepository extends BaseRepository implements LogMessageInterface
 {
     public function __construct()
     {
