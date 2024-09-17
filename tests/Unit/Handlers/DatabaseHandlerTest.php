@@ -50,11 +50,12 @@ class DatabaseHandlerTest extends TestCase
 
     public function testCorrectlyLogsExceptions(): void
     {
-        report(new Exception('This exception should be logged.'));
+        report('This exception should be logged.');
 
+        $logMessage = LogMessage::first();
         $this->assertStringContainsString(
             'This exception should be logged.',
-            LogMessage::first()->getContext()['exception']
+            $logMessage->context['exception']
         );
     }
 
@@ -131,8 +132,6 @@ class DatabaseHandlerTest extends TestCase
      */
     public function testWriteExceptionHandling(): void
     {
-        $this->throwException(new Exception('Error succeed'));
-
         $mockRecord = m::mock(LogRecord::class, [
             'datetime' => new DateTimeImmutable(),
             'channel' => 'test',
@@ -150,94 +149,12 @@ class DatabaseHandlerTest extends TestCase
 
         $mockHandler
             ->shouldReceive('write')
-            ->once()
-            ->andReturnSelf();
-
-        $mockHandler->write($mockRecord);
+            ->andReturn(new Exception('Something went wrong.'));
 
         $this->assertDatabaseMissing('logs', [
             'message' => 'Test log message',
         ]);
     }
-
-    //    public function testThrowException(): void
-    //    {
-    //        $this->expectException(Exception::class);
-    //
-    //        // Mock the LogMessageRepository to throw an exception when create() is called
-    //        m::mock(LogMessageRepository::class)
-    //            ->shouldReceive('create')
-    //            ->with([])
-    //            ->andThrow(Exception::class, 'something went wrong.');
-    //
-    //        // Mock the Log facade to expect the fallback logging
-    //        Log::shouldReceive('stack')
-    //            ->once()
-    //            ->with(['single'])
-    //            ->andReturnSelf();
-    //
-    //        Log::shouldReceive('debug')
-    //            ->twice(); // Once for the original message and once for the exception
-    //
-    //        // Create a LogRecord to pass to the handler
-    //        $logRecord = new LogRecord(
-    //            datetime: new \DateTimeImmutable(),
-    //            channel: 'test',
-    //            level: Level::Info,
-    //            message: 'Test log message',
-    //            context: [],
-    //            extra: [],
-    //        );
-    //
-    //        // Create the DatabaseHandler instance
-    //        $databaseHandler = new DatabaseHandler();
-    //
-    //        $databaseHandler->handle($logRecord);
-    //
-    //        $this->testThrowException();
-    //    }
-    //
-    //    public function testWriteHandlesExceptionGracefully()
-    //    {
-    //        // Mock the LogMessageRepository to throw an exception when create() is called
-    //        $logMessageRepositoryMock = $this->createMock(LogMessageRepository::class);
-    //        $logMessageRepositoryMock
-    //            ->expects($this->once())
-    //            ->method('create')
-    //            ->willThrowException(new Exception('Database error'));
-    //
-    //        // Mock the Log facade to expect the fallback logging
-    //        Log::shouldReceive('stack')
-    //            ->once()
-    //            ->with(['single'])
-    //            ->andReturnSelf();
-    //
-    //        Log::shouldReceive('debug')
-    //            ->twice(); // Once for the original message and once for the exception
-    //
-    //        // Create a LogRecord to pass to the handler
-    //        $logRecord = new LogRecord(
-    //            datetime: new \DateTimeImmutable(),
-    //            channel: 'test',
-    //            level: Level::Info,
-    //            message: 'Test log message',
-    //            context: [],
-    //            extra: [],
-    //        );
-    //
-    //        // Create the DatabaseHandler instance
-    //        $databaseHandler = new DatabaseHandler();
-    //
-    //        // Use reflection to access the protected write method
-    //        $reflection = new \ReflectionClass($databaseHandler);
-    //        $method = $reflection->getMethod('handle');
-    //        $method->setAccessible(true);
-    //
-    //        // Call the write methodw, which should handle the exception internally
-    //        $method->invoke($databaseHandler, $logRecord);
-    //
-    //        $this->assertInstanceOf(Exception::class, $method);
-    //    }
 
     public function tearDown(): void
     {
