@@ -54,7 +54,7 @@ class DatabaseHandlerTest extends TestCase
 
         $this->assertStringContainsString(
             'This exception should be logged.',
-            LogMessage::first()->context['exception']
+            LogMessage::first()->getContext()['exception']
         );
     }
 
