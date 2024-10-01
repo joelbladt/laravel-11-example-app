@@ -28,16 +28,10 @@ jobs:
       run: |
         mkdir -p database
         touch database/database.sqlite
-    - name: Create Database Structure
-      env:
-        DB_CONNECTION: sqlite
-        DB_DATABASE: database/database.sqlite
-      run: php artisan migrate
+    - name: Create Database Tables
+      run: php artisan migrate --env=sqlite --no-interaction -vvv
     - name: Execute tests (Unit and Feature tests) via PHPUnit/Pest
-      env:
-        DB_CONNECTION: sqlite
-        DB_DATABASE: database/database.sqlite
-      run: php artisan test --parallel
+      run: php artisan test --parallel --coverage  --env=sqlite
     - name: Coveralls GitHub Action
       uses: coverallsapp/github-action@v2.3.0
       with:
