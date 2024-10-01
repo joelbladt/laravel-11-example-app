@@ -33,3 +33,7 @@ jobs:
         DB_CONNECTION: sqlite
         DB_DATABASE: database/database.sqlite
       run: php artisan test --parallel
+    - name: Coveralls GitHub Action
+      uses: coverallsapp/github-action@latest
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
