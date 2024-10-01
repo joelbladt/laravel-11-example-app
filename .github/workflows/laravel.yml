@@ -34,7 +34,6 @@ jobs:
         DB_DATABASE: database/database.sqlite
       run: |
         php artisan migrate:install --no-interaction -vvv
-        php artisan db:seed
     - name: Execute tests (Unit and Feature tests) via PHPUnit/Pest
       env:
         DB_CONNECTION: sqlite
