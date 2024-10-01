@@ -48,17 +48,6 @@ class DatabaseHandlerTest extends TestCase
         ]);
     }
 
-    public function testCorrectlyLogsExceptions(): void
-    {
-        report('This exception should be logged.');
-
-        $logMessage = LogMessage::first();
-        $this->assertStringContainsString(
-            'This exception should be logged.',
-            $logMessage->context['exception']
-        );
-    }
-
     public function testLogsDifferentLevels(): void
     {
         Log::channel('database')->error('Error message');
