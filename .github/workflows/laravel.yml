@@ -28,8 +28,8 @@ jobs:
       run: |
         mkdir -p database
         touch database/database.sqlite
-    - name: Create Database Tables
-      run: php artisan migrate --env=sqlite --no-interaction -vvv
+        php artisan migrate:install --no-interaction -vvv
+        php artisan db:seed
     - name: Execute tests (Unit and Feature tests) via PHPUnit/Pest
       run: php artisan test --parallel --coverage  --env=sqlite
     - name: Coveralls GitHub Action
