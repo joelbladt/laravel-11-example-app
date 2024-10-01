@@ -44,4 +44,4 @@ jobs:
       env:
         COVERALLS_REPO_TOKEN: Wl5TGS5ZY9ZPGWvT9V8jKNsGUxVhQ1QQQ
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+        github-token: ${{ secrets.COVERALLS_TOKEN }}
