@@ -40,8 +40,6 @@ jobs:
         DB_DATABASE: database/database.sqlite
       run: php artisan test --parallel --coverage
     - name: Coveralls GitHub Action
-      uses: coverallsapp/github-action@v2.3.0
-      env:
-        COVERALLS_REPO_TOKEN: Wl5TGS5ZY9ZPGWvT9V8jKNsGUxVhQ1QQQ
+      uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.COVERALLS_TOKEN }}
