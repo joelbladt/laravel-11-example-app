@@ -5,6 +5,11 @@
          cacheDirectory=".phpunit.cache"
          colors="true"
 >
+    <coverage>
+        <report>
+            <clover outputFile="build/logs/clover.xml"/>
+        </report>
+    </coverage>
     <testsuites>
         <testsuite name="Unit">
             <directory>tests/Unit</directory>
